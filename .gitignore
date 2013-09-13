@@ -1,0 +1,10 @@
+*.[oa]
+*~
+*.bak
+/.classpath
+/.directory
+/.factorypath
+/.project
+/.settings/
+/.externalToolBuilders/
+/.preferences.xml

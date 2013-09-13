@@ -1,0 +1,63 @@
+-----------------
+Prerequisities
+-----------------
+ - Python 2.7.3 or later
+ - iPython, PySci, MatPlotLib (make sure that your Python path is updated properly)
+ 
+
+By turing on the TCP logging in a TCP flow using mirage-direct, you can collect timestamped data about:
+ - received segments
+ - transmitted segments
+ - transmission delays due to lower layers
+ - window information
+ 
+ We've discussed in the main README file how to enable logging, run an experiment and collect the data by redirecting the output of the Xen console to a file.
+ 
+ Here, we assume that you have two files, one for the iperf client and one for the server:
+  - data/receiver.log (server)
+  - data/sender.log (client)
+  
+The next step is to run the python script which processes the data, cleans noise, store them as time series and them plots them.
+Here is how:
+	> python Main.py
+	
+At the bottom of file Main.py, you have the followings (under the main section):
+	plotSenderTxRxData("./data/sender.log")
+#	plotSenderTxDelayData("./data/sender.log")
+#	plotReceiverRxTxData("./data/receiver.log", ["*", 0.1])
+#	plotReceiverTxDelayData("./data/receiver.log", ["*", 0.1])
+#	plotSenderCongestionWindow("./data/sender.log")
+	
+You should have only one of these lines uncommented at each time.
+This is because I haven't currently implemented sub-plots for MatPlotLib.
+Each of the above examples is explained as follows:
+ - 	plotSenderTxRxData("./data/sender.log")
+	Plots the transmitted segments timeseries of the iperf-client (sender)
+ - 	plotSenderTxDelayData("./data/sender.log")
+	Plots the transimsison delay timeseries  (due to lower layers) of the iperf-client (sender)
+ - 	plotSenderCongestionWindow("./data/sender.log")
+	Plots the size of the congestion window timeseries of the iperf-client (sender)
+ - 	plotReceiverRxTxData("./data/receiver.log", ["*", 0.1])
+	Plots the received segments timeseries of the iperf-server (receiver). 
+	Note that the expression ["*", 0.1] indicates that the timeseries will be plotted from start until second 0.1
+- 	plotReceiverRxTxData("./data/receiver.log", ["*", 0.1])
+	Plots the sent ACK segments of the iperf-server (receiver). 
+	
+These are actually only 5 examples of how to plot some basic datasets. You can expand these with your own, or better you can create combined plots.
+
+Here is an example of a Window Update log record;
+	Time=0.000406, Delay=0.000000, Op=WND, Kind=UPD, details=[466447880 466444962 466442044 452893865 0 262140 262140 5840 262140 0 466434749]
+
+The last field holds the following information:
+F-0:  tx_nxt 
+F-1:  ack_seq 
+F-2:  snd_una 
+F-3:  rx_nxt 
+F-4   backoff_count 
+F-5:  tx_wnd 
+F-6:  rx_wnd 
+F-7:  cwnd 
+F-8:  ssthresh 
+F-9:  fast_recovery 
+F-10: fast_rec_th
+
