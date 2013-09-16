@@ -23,13 +23,11 @@ SERVER_VM_NAME='mirageIperfServer'
 SERVER_KERN_NAME='./xen/iperfServer.xen'
 CLIENT_VM_NAME="mirageIperfClient"
 CLIENT_KERN_NAME='./xen/iperfClient.xen'
-SWITCH_VM_NAME="mirageSwitch"
-SWITCH_KERN_NAME='/boot/guest/mirageSwitch.xen'
 EXISTING_VM_UUIDS=''
 
 usage(){
 	echo Usage : `basename $0` MODULE ACTION
-        echo "        MODULE = server | client | switch | all"
+        echo "        MODULE = server | client | all"
         echo "        ACTION = install | cinstall | uninstall"
         exit 1
 }
@@ -81,9 +79,6 @@ case $1 in
         "client")
                 MODULE="client"
                 ;;
-        "switch")
-                MODULE="switch"
-                ;;
          "all")
                 MODULE="all"
                 ;;
@@ -101,9 +96,6 @@ case $2 in
                 if [[ "${MODULE}" == "client" ||  "${MODULE}" == "all" ]]; then
                         installMirageVM $CLIENT_VM_NAME $CLIENT_KERN_NAME
                 fi
-                if [[ "${MODULE}" == "switch" ||  "${MODULE}" == "all" ]]; then
-                        installMirageVM $SWITCH_VM_NAME $SWITCH_KERN_NAME "random"
-                fi
                  ;;
         "cinstall")
                 ACTION="cinstall"
@@ -115,10 +107,6 @@ case $2 in
                         deleteVM $CLIENT_VM_NAME
                         installMirageVM $CLIENT_VM_NAME $CLIENT_KERN_NAME
                 fi
-		if [[ "${MODULE}" == "switch" ||  "${MODULE}" == "all" ]]; then
-                        deleteVM $SWITCH_VM_NAME
-                        installMirageVM $SWITCH_VM_NAME $SWITCH_KERN_NAME "random random"
-                fi
                 ;;
         "uninstall")
                 ACTION="uninstall"
@@ -127,9 +115,6 @@ case $2 in
                 fi
                 if [[ "${MODULE}" == "client" ||  "${MODULE}" == "all" ]]; then
                         deleteVM $CLIENT_VM_NAME
-                fi
-                if [[ "${MODULE}" == "switch" ||  "${MODULE}" == "all" ]]; then
-                        deleteVM $SWITCH_VM_NAME
                 fi
                 ;;
         *) echo -e "Invalid action ($2).\n"
